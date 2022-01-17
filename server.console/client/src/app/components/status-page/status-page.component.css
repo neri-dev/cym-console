@@ -1,0 +1,17 @@
+table {
+  width: 100%;
+  height: calc(100vh - 68px);
+  overflow: auto;
+  /* height: 100%; */
+  bottom: 0;
+  top: 0;
+}
+
+.mat-form-field {
+  font-size: 14px;
+  width: 100%;
+}
+
+td, th {
+  width: 25%;
+}

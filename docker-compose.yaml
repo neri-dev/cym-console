@@ -1,0 +1,68 @@
+version: "3.8"
+
+services:
+    
+    gateway:
+        container_name: gateway
+        image: nginx
+        volumes:
+          - ./gateway/templates:/etc/nginx/templates
+          - ./gateway/nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+        ports:
+          - "8080:80"
+        environment:
+            - NGINX_PORT=80      
+        networks:
+            - main     
+        depends_on:
+            - cym-console   
+            - cym-mail     
+            - cym-auth
+            - mongodb
+
+    cym-console:
+        container_name: cym-console
+        hostname: console
+        build:
+            context: ./server.console/
+        command: npm run start
+        networks:
+            - main
+        links:
+            - cym-auth
+    
+    cym-mail:
+        container_name: cym-mail
+        hostname: mail
+        build:
+            context: ./server.mail/
+        command: npm run start    
+        networks:
+            - main
+    
+    cym-auth:
+        container_name: cym-auth
+        hostname: auth
+        build:
+            context: ./server.auth/
+        command: npm run start    
+        networks:
+            - main
+    
+    mongodb:
+        container_name: mongodb
+        image: mongo:4.4.6
+        volumes:
+          - ./mongodb:/data/db
+        ports:
+          - "27017:27017"
+        restart: on-failure
+        environment:
+          - MONGO_INITDB_ROOT_USERNAME=admin
+          - MONGO_INITDB_ROOT_PASSWORD=admin
+          - MONGO_INITDB_DATABASE=main
+        networks:
+          - main
+networks:
+  main:
+    name: 'app-network'
