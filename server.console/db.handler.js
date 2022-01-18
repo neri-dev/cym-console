@@ -2,7 +2,7 @@ const MongoClient = require('mongodb').MongoClient;
 const assert = require('assert');
 
 // Connection URL
-const dbHost = process.env.MONGODB | 'mongodb';
+const dbHost = 'mongodb';
 const url = `mongodb://admin:admin@${dbHost}:27017`;
 
 // Database Name

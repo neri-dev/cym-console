@@ -30,6 +30,8 @@ services:
             - main
         links:
             - cym-auth
+        depends_on:
+            - mongodb
     
     cym-mail:
         container_name: cym-mail
@@ -39,6 +41,8 @@ services:
         command: npm run start    
         networks:
             - main
+        depends_on:
+            - mongodb
     
     cym-auth:
         container_name: cym-auth
