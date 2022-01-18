@@ -1,10 +1,9 @@
 {
-  "name": "cymulate-console-server",
+  "name": "cymulate-mail-server",
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "start": "node server.mail.js",
-    "build": "webpack"
+    "start": "node server.mail.js"
   },
   "author": "Neria Mahatzri",
   "license": "ISC",

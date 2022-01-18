@@ -5,7 +5,6 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 const ACCESS_TOKEN_SECRET = 'ymda7TNx3djEDedkKaY0sayIkARCTJKUr0bSah1fDI09TZYpV7TTtWj50bfLcQvZ';
-// const REFRESH_TOCKEN_SECRET = '0f4ZKOtUtvdIq9QCe48v0Y8xvAmbnt5AyvqV201K2PGBZkPoHtTZxmkN83QXZ5rI';
 
 // # Define middleware
 app.use(bodyParser.json());

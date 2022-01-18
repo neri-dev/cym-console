@@ -1,0 +1,31 @@
+.mat-card {
+
+    border: 55px !important;
+    border-radius: 0px !important;
+    border: #000 !important;
+    width: 100%;
+    height: calc(100vh - 100px);
+}
+
+.center {
+    display: block;
+    padding: 30px;
+}
+
+.menu-button, span {
+    margin: 15px;
+}
+
+.chip-list {
+    width: 100%;
+}
+
+.full-width {
+    width: 100%;
+}
+
+.example-margin {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+

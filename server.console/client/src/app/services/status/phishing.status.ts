@@ -1,7 +1,7 @@
 export interface PhishingStatus {
-    email: string | undefined;
+    to: string | undefined;
     status: boolean | undefined;
-    contentId: string | undefined;
+    content: string | undefined;
 }
 
 export interface PhishingStatusResponse {

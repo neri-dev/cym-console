@@ -11,6 +11,7 @@ const app = express();
 const uuidv4 = require('uuid').v4;
 const port = process.env.PORT || 3000;
 
+// # Define middleware
 app.use(bodyParser.json());
 
 var transporter = nodemailer.createTransport({
@@ -24,10 +25,11 @@ var transporter = nodemailer.createTransport({
     }
 });
 
-app.post('/sendMail', basicAuth({ users: { 'admin': 'admin' } }), async (req, res) => {
+// # Define API
+app.post('/sendMail', basicAuth({ users: { 'admin': 'admin' } }), (req, res) => {
 
     // extract parameters
-    let { from, to, subject, html, variables, useDemo } = req.body;
+    let { from, to, subject, content, useDemo } = req.body;
 
     // validate mandatory parameters
     if (!from || !to) {
@@ -35,41 +37,52 @@ app.post('/sendMail', basicAuth({ users: { 'admin': 'admin' } }), async (req, re
         return res.sendStatus(500);
     }
 
-    if (html && !variables) {
-        console.log('missing html variables. e.g: {firstName: "Bob", lastName: "Marley"}');
+    if (useDemo !== true && !content) {
+        console.log('missing html content, or useDemo=true');
         return res.sendStatus(500);
     }
 
-    // generate unique id for phishing mail
-    const phishingId = uuidv4();
+    // get the current host name in order to create the phishing url
     const host = getCurrentHostName(req);
-
-    if (useDemo == true) {
-        html = await loadTemplateSample();
-        variables = getTemplateSampleVariables(to, host, phishingId);
-    }
-
-    // compile html text into template callback
-    let template = handlebars.compile(html);
-
-    // create the html template
-    let htmlToSend = template(variables);
-
     if (!Array.isArray(to)) to = [to];
 
-    to.forEach(t => {
+    let sentStatus = { error: 0, total: 0 };
+    to.forEach(async t => {
+        // generate unique id for phishing mail
+        const phishingId = uuidv4();
+
+        if (useDemo == true) {
+            content = await loadTemplateSample();
+        }
+
+        // get template variables
+        const variables = getTemplateSampleVariables(t, host, phishingId);
+
+        // compile html text into template callback
+        let template = handlebars.compile(content);
+
+        // create the html template
+        let htmlToSend = template(variables);
+
         // prepare mail options
-        var mailOptions = { from, to:t, subject, html: htmlToSend };
+        var mailOptions = { from, to: t, subject, html: htmlToSend };
 
         // send mail
         transporter.sendMail(mailOptions, async (error, info) => {
+            sentStatus.total++;
+
             if (error) {
                 console.log(error);
-                res.sendStatus(500);
+                sentStatus.error++;
             } else {
                 console.log('Email sent: ' + info.response);
-                res.sendStatus(200);
                 await DBHandler.storePhishingStatus(phishingId, t, htmlToSend)
+            }
+
+            // verify final status
+            if (sentStatus.total == to.length) {
+                const statusCode = sentStatus.error == 0 ? 200 : 500;
+                return res.json(`{status: ${statusCode}}`);
             }
         });
     });
@@ -77,9 +90,10 @@ app.post('/sendMail', basicAuth({ users: { 'admin': 'admin' } }), async (req, re
 
 app.get('/done/:id', function (req, res) {
     DBHandler.updatePhishingStatus(req.params.id);
-    res.send('You Busted!');
+    res.send("Smile! You're Busted!");
 });
 
+// # Private methods
 function getCurrentHostName(req) {
     const proxyHost = req.headers["x-forwarded-host"];
     const host = proxyHost ? proxyHost : req.headers.host;
@@ -89,7 +103,7 @@ function getCurrentHostName(req) {
 function getTemplateSampleVariables(to, host, phishingId) {
     return {
         username: to,
-        recoveryUrl: `http://${host}/mail/done/${phishingId}`
+        url: `http://${host}/mail/done/${phishingId}`
     };
 }
 
@@ -99,6 +113,7 @@ async function loadTemplateSample() {
     return htmlContent;
 }
 
+// # Start server...
 app.listen(port, () => {
     console.log("Server is listening on port " + port);
 });

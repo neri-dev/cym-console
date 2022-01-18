@@ -6,6 +6,7 @@ import * as moment from "moment";
 import jwt_decode from 'jwt-decode';
 
 const AUTH_API = `${window.location.origin}/auth/`;
+// const AUTH_API = `http://localhost:3001/`;
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -25,14 +26,14 @@ export class AuthService {
 
     obs.subscribe(token => {
       this.setSession(token.toString());
-      this.router.navigate(['home']);
+      this.router.navigate(['/']);
     });
 
     return obs;
   }
 
   private setSession(token: string) {
-    const {iat}  = this.decodeToken(token);
+    const { iat } = this.decodeToken(token);
     const expiresAt = moment().add(iat, 'second');
 
     localStorage.setItem('id_token', token);
@@ -45,11 +46,11 @@ export class AuthService {
 
   logout() {
     localStorage.removeItem("id_token");
-    localStorage.removeItem("expires_at");
   }
 
   public isLoggedIn() {
-    return moment().isBefore(this.getExpiration());
+    return localStorage.getItem("id_token") != null &&
+      moment().isBefore(this.getExpiration());
   }
 
   isLoggedOut() {
@@ -58,12 +59,13 @@ export class AuthService {
 
   getExpiration() {
     const expiration = localStorage.getItem("expires_at") ?? '';
-    const expiresAt = JSON.parse(expiration);
-    return moment(expiresAt);
+    const expiresAt = JSON.parse(expiration == "" ? "{}" : expiration);
+    const m = moment(expiresAt);
+    return m;
   }
 
   getToken() {
-    return localStorage.getItem('token_id');
+    return localStorage.getItem('id_token');
   }
 }
 

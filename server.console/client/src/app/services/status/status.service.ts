@@ -11,6 +11,7 @@ export class StatusService {
   constructor(private http: HttpClient) { }
 
   getStatuses(from: number, to: number): Observable<PhishingStatusResponse> {
+    // const url = `http://localhost:3000/statuses?from=${from}&to=${to}`;
     const url = `${window.location.origin}/statuses?from=${from}&to=${to}`;
     return this.http.get<PhishingStatusResponse>(url);
   }

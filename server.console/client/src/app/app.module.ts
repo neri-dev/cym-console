@@ -17,7 +17,6 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatCardModule } from '@angular/material/card';
 import { MatInputModule } from '@angular/material/input';
 import { AuthGuard } from './services/auth/auth.guard';
-import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from './components/home/home.component';
 import { LogoutComponent } from './components/logout/logout.component';
 import { StatusPageComponent } from './components/status-page/status-page.component';
@@ -25,27 +24,14 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatTableModule } from '@angular/material/table';
 import { SendEmailComponent } from './components/send-email/send-email.component';
 import { authInterceptorProviders } from './heplers/auth.interceptor';
-
-
-const routes: Routes = [
-  { path: 'login', component: LoginComponent, },
-  { path: 'logout', component: LogoutComponent },
-
-  // home route protected by auth guard
-  {
-    path: 'home',
-
-    component: HomeComponent,
-    canActivate: [AuthGuard],
-    children: [
-      { path: 'status', component: StatusPageComponent},
-      { path: 'sendEmail', component: SendEmailComponent},
-    ]
-  },
-  { path: '', redirectTo: '/home', pathMatch: 'full' },
-  // otherwise redirect to home
-  { path: '**', redirectTo: 'login' }
-];
+import { MailContentDialogComponent } from './components/mail-content-dialog/mail-content-dialog.component';
+import { MatDialogModule } from '@angular/material/dialog';
+import { SideBarComponent } from './components/side-bar/side-bar.component';
+import { AppRoutingModule } from './app-routing.module';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 
 @NgModule({
   declarations: [
@@ -54,13 +40,15 @@ const routes: Routes = [
     HomeComponent,
     LogoutComponent,
     StatusPageComponent,
-    SendEmailComponent
+    SendEmailComponent,
+    MailContentDialogComponent,
+    SideBarComponent
   ],
   imports: [
     CommonModule,
     HttpClientModule,
     BrowserModule,
-    RouterModule.forRoot(routes),
+    AppRoutingModule,
     FormsModule,
     BrowserAnimationsModule,
     MatToolbarModule,
@@ -74,7 +62,12 @@ const routes: Routes = [
     MatCardModule,
     MatInputModule,
     MatPaginatorModule,
-    MatTableModule
+    MatTableModule,
+    MatDialogModule,
+    MatChipsModule,
+    MatCheckboxModule,
+    MatSnackBarModule,
+    MatProgressSpinnerModule
   ],
   providers: [AuthService, AuthGuard, authInterceptorProviders],
   bootstrap: [AppComponent]

@@ -1,0 +1,8 @@
+<h1 mat-dialog-title>Employee email: {{data.to}}</h1>
+<div mat-dialog-content>
+  <p>Email content</p>
+    <div [innerHTML]="data.content" style="color: black;"></div>
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="onClose()">Close</button>
+</div>

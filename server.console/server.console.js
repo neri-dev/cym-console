@@ -18,8 +18,8 @@ app.set('view engine', 'pug');
 
 // # Define API Routes
 app.get('/', (req, res) => res.sendFile(path.join(_path, 'index.html')));
-app.get('/statuses', /* authenticateJWT,*/ APIs.getStatuses);
-app.get('/statusesCount', /*authenticateJWT,*/ APIs.getStatusesCount);
+app.get('/statuses', authenticateJWT, APIs.getStatuses);
+app.get('/statusesCount', authenticateJWT, APIs.getStatusesCount);
 
 // # Define JWT middleware
 function authenticateJWT(req, res, next) {
